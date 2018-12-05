@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.opengl.GLES20.GL_TEXTURE0;
 import static android.opengl.GLES20.GL_TEXTURE_2D;
@@ -22,22 +24,40 @@ import static android.opengl.GLES20.glGenTextures;
 
 public class TextureUtils {
 
-    public static int loadTexture(Context context, int resourceId) {
+    public static int[] loadTexture(Context context, int[] resourceId) {
         // создание объекта текстуры
         final int[] textureIds = new int[2];
         glGenTextures(1, textureIds, 0);
         if (textureIds[0] == 0) {
-            return 0;
+            return new int[]{0};
         }
 
         // получение Bitmap
 
+        List<Bitmap> bitmapList = new ArrayList<>();
 
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inScaled = false;
 
-        final Bitmap bitmap = BitmapFactory.decodeResource(
-                context.getResources(), resourceId, options);
+
+        int i = 0;
+        for (int r: resourceId){
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inScaled = false;
+
+
+            final Bitmap bitmap = BitmapFactory.decodeResource(
+                    context.getResources(), r, options);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textureIds[i]);
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+            // GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+            bitmap.recycle();
+            i++;
+
+        }
+
 
 
         /*final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -49,22 +69,17 @@ public class TextureUtils {
         }*/
 
         // настройка объекта текстуры
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureIds[0]);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-       // GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
 
 
 
 
-        bitmap.recycle();
+
+
 
         // сброс target
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        return textureIds[0];
+        return textureIds;
     }
 
     public static Bitmap getBitmapFromURL(String src) {

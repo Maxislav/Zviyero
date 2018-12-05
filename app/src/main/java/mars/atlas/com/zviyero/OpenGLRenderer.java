@@ -53,7 +53,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     private int aTextureLocation;
     private int uTextureUnitLocation;
     private int uMatrixLocation;
-    private int texture;
+    private int [] texture;
 
     private float angleZ = 0, angleX = 0;
 
@@ -128,7 +128,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
                 .asFloatBuffer();
         vertexData.put(vertices);
 
-        texture = TextureUtils.loadTexture(context, R.drawable.tile1_1_1);
+        texture = TextureUtils.loadTexture(context, new int[]{R.drawable.box, R.drawable.tile1_1_1 });
 
 
     }
@@ -151,10 +151,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         // помещаем текстуру в target 2D юнита 0
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-
+        glBindTexture(GL_TEXTURE_2D, texture[1]);
         // юнит текстуры
         glUniform1i(uTextureUnitLocation, 0);
+
+
+
+
     }
 
 
