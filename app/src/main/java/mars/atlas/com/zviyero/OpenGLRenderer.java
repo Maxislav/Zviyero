@@ -80,7 +80,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         getLocations();
         prepareData();
         bindData();
-       // createViewMatrix();
+        // createViewMatrix();
     }
 
     /**
@@ -117,8 +117,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
                 1, -1, 1, 0, 0,
                 1, -1, -1, 0, 1,
-                1, 1, 1, 1,0,
-                1,1, -1, 1,1
+                1, 1, 1, 1, 0,
+                1, 1, -1, 1, 1
 
         };
 
@@ -128,7 +128,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
                 .asFloatBuffer();
         vertexData.put(vertices);
 
-        texture = TextureUtils.loadTexture(context, R.drawable.box);
+        texture = TextureUtils.loadTexture(context, R.drawable.tile1_1_1);
 
 
     }
@@ -151,8 +151,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         // помещаем текстуру в target 2D юнита 0
         glActiveTexture(GL_TEXTURE0);
-
-
         glBindTexture(GL_TEXTURE_2D, texture);
 
         // юнит текстуры
@@ -175,22 +173,15 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         float x1;
         float y1;
 
-        float r1 = r *(float) Math.cos(aX);
-        float z1 = r *(float) Math.sin(aX);
+        float r1 = r * (float) Math.cos(aX);
+        float z1 = r * (float) Math.sin(aX);
         x1 = r1 * (float) Math.sin(aZ);
-        y1 =  -r1 * (float) Math.cos(aZ);
+        y1 = -r1 * (float) Math.cos(aZ);
 
 
         eyeX = x1;
-
-
         eyeY = y1;
-
         eyeZ = z1;
-        /*float eyeZ = -eyeY * (float) Math.sin(Math.toRadians(angleX));
-        eyeY = eyeY * (float) Math.cos(Math.toRadians(angleX));
-*/
-
 
 
         // точка направления камеры
@@ -209,7 +200,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         //glUseProgram(programId);
     }
 
-    public void setAngle(float angleZ, float angleX){
+    public void setAngle(float angleZ, float angleX) {
         this.angleZ = angleZ;
         this.angleX = angleX;
     }
@@ -241,8 +232,6 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glDrawArrays(GL_TRIANGLE_STRIP, 4, 4);
-
-
 
 
     }
