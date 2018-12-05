@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private GLSurfaceView glSurfaceView;
     OpenGLRenderer openGLRenderer;
     private final static String LOG_TAG = "MainActivityClass";
-    float angleZ = 0;
+    float angleZ = 0, angleX;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,10 +54,14 @@ public class MainActivity extends AppCompatActivity {
                     if(X != 0){
                         dX = X - event.getX();
                     }
+                    if(Y != 0){
+                        dY = Y - event.getY();
+                    }
                     angleZ +=(dX/2);
-                    Log.d(LOG_TAG, String.valueOf(angleZ));
-                    openGLRenderer.setAngle(angleZ);
+                    angleX -=(dY/2);
+                    openGLRenderer.setAngle(angleZ, angleX);
                     X = event.getX();
+                    Y = event.getY();
                     break;
                 }
             }
