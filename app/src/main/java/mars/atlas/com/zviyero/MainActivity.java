@@ -7,10 +7,18 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.DragEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private GLSurfaceView glSurfaceView;
+    OpenGLRenderer openGLRenderer;
+    private final static String LOG_TAG = "MainActivityClass";
+    float angleZ = 0;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,19 +27,58 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-
-        glSurfaceView = new GLSurfaceView(this);
+        setContentView(R.layout.main_activity);
+        glSurfaceView = (GLSurfaceView)findViewById(R.id.surfaceviewclass);
         glSurfaceView.setEGLContextClientVersion(2);
-        glSurfaceView.setRenderer(new OpenGLRenderer(this));
-        setContentView(glSurfaceView);
+        openGLRenderer = new OpenGLRenderer(this);
+
+        glSurfaceView.setRenderer(openGLRenderer);
+        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        glSurfaceView.setOnTouchListener(new GLSurfaceViewEvent());
 
 
     }
+
+
+    private class GLSurfaceViewEvent implements View.OnTouchListener, View.OnDragListener {
+        float X, Y, dX, dY;
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    X = 0;
+                    Y = 0;
+                    return true;
+                case MotionEvent.ACTION_MOVE:{
+                    if(X != 0){
+                        dX = X - event.getX();
+                    }
+                    angleZ +=(dX/2);
+                    Log.d(LOG_TAG, String.valueOf(angleZ));
+                    openGLRenderer.setAngle(angleZ);
+                    X = event.getX();
+                    break;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+            return false;
+        }
+    }
+
+
+
     private boolean supportES2() {
         ActivityManager activityManager =
                 (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
         return (configurationInfo.reqGlEsVersion >= 0x20000);
     }
+
+
 
 }
