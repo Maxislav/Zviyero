@@ -49,13 +49,14 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     private final Context context;
     private FloatBuffer vertexData;
     private int programId;
+    private int programId2;
     private int aPositionLocation;
     private int aTextureLocation;
     private int uTextureUnitLocation;
     private int uMatrixLocation;
-    private int [] texture;
+    private int [] texture = new int[2];
 
-    private float angleZ = 0, angleX = 0;
+    private float angleZ = 0, angleX = 45;
 
     private final static int POSITION_COUNT = 3;
     private static final int TEXTURE_COUNT = 2;
@@ -66,6 +67,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     private float[] mMatrix = new float[16];
 
     GL10 gl;
+
+    Section section;
 
     public OpenGLRenderer(Context context) {
         this.context = context;
@@ -80,16 +83,20 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         getLocations();
         prepareData();
         bindData();
+
+       // new Section(context);
         // createViewMatrix();
     }
 
     /**
      * 1
+     *
+     *
      */
     private void createAndUseProgram() {
-        int vertexShaderId = ShaderUtils.createShader(context, GL_VERTEX_SHADER, R.raw.vertex_shader);
-        int fragmentShaderId = ShaderUtils.createShader(context, GL_FRAGMENT_SHADER, R.raw.fragment_shader);
-        programId = ShaderUtils.createProgram(vertexShaderId, fragmentShaderId);
+        int vertexShaderId = ShaderUtils.createShader(context, GL_VERTEX_SHADER, R.raw.vertex_shader); // =1
+        int fragmentShaderId = ShaderUtils.createShader(context, GL_FRAGMENT_SHADER, R.raw.fragment_shader); // =2
+        programId = ShaderUtils.createProgram(vertexShaderId, fragmentShaderId); // = 3
         glUseProgram(programId);
     }
 
@@ -128,7 +135,8 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
                 .asFloatBuffer();
         vertexData.put(vertices);
 
-        texture = TextureUtils.loadTexture(context, new int[]{R.drawable.box, R.drawable.tile1_1_1 });
+        texture[0] = TextureUtils.loadTexture(context, R.drawable.tile1_1_1);
+        texture[1] = TextureUtils.loadTexture(context, R.drawable.box);
 
 
     }
@@ -150,8 +158,10 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         glEnableVertexAttribArray(aTextureLocation);
 
         // помещаем текстуру в target 2D юнита 0
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture[1]);
+        //glActiveTexture(GL_TEXTURE0);
+       // glBindTexture(GL_TEXTURE_2D, texture[0]);
+        //glActiveTexture(GL_TEXTURE0);
+      //  glBindTexture(GL_TEXTURE_2D, texture[1]);
         // юнит текстуры
         glUniform1i(uTextureUnitLocation, 0);
 
@@ -233,7 +243,9 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         createViewMatrix();
         bindMatrix();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glBindTexture(GL_TEXTURE_2D, texture[0]);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindTexture(GL_TEXTURE_2D, texture[1]);
         glDrawArrays(GL_TRIANGLE_STRIP, 4, 4);
 
 
